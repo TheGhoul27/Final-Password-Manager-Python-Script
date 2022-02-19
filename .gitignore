@@ -1,0 +1,8 @@
+__pycache__
+output
+outputnew
+secret.key
+password_manager.db
+dist
+build
+venv
