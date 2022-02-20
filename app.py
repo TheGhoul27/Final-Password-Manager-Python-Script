@@ -219,4 +219,4 @@ if __name__ == '__main__':
     handler.register_function(forgotPassword, 'forgotPassword')
     app.run(debug=True, host="localhost", port=5050)
 
-# pyinstaller --noconfirm --onefile --console --windowed "D:/Projects/Password Manager/finalFlask/app.py"
+# pyinstaller --noconfirm --onefile --console --windowed --icon "D:/Projects/Password Manager/finalFlask/output/favicon.ico" "D:/Projects/Password Manager/finalFlask/app.py"
