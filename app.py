@@ -4,6 +4,7 @@ from flask import Flask, jsonify
 from flask_xmlrpcre.xmlrpcre import XMLRPCHandler, Fault
 from flask_cors import CORS, cross_origin
 from encryptPassword import *
+from mailPassword import mailid
 
 app = Flask(__name__)
 CORS(app, support_credentials=True)
@@ -184,14 +185,27 @@ def userValidation(username, password):
                 conn.close()
                 return jsonify({'returnvalue': True})
             conn.close()
-            return jsonify({'returnvalue': True})
+            return jsonify({'returnvalue': False})
     conn.close()
     return jsonify({'returnvalue': False})
 
 
 @ cross_origin(supports_credentials=True)
 def forgotPassword(username):
-    pass
+    conn = createDatabase()
+    key = load_key()
+    rows = conn.execute("SELECT * from USERS")
+    for row in rows:
+        userRetrive = bytes.fromhex(
+            decrypt_message(row[2], key)).decode('utf-8')
+        if bytes.fromhex(userRetrive[1:]).decode("utf-8") == username:
+            password = bytes.fromhex(
+                decrypt_message(row[3], key)).decode('utf-8')
+            mailid(password, username)
+            conn.close()
+            return jsonify({'returnvalue': True})
+    conn.close()
+    return jsonify({'returnvalue': False})
 
 
 if __name__ == '__main__':
@@ -204,3 +218,5 @@ if __name__ == '__main__':
     handler.register_function(userValidation, 'userValidation')
     handler.register_function(forgotPassword, 'forgotPassword')
     app.run(debug=True, host="localhost", port=5050)
+
+# pyinstaller --noconfirm --onefile --console --windowed "D:/Projects/Password Manager/finalFlask/app.py"
