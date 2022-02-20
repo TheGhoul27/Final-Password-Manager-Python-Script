@@ -6,3 +6,4 @@ password_manager.db
 dist
 build
 venv
+app.spec

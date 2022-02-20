@@ -72,7 +72,7 @@ def add_create(addorCreate, service, url, username, password, user):
             "SELECT * FROM " + user)
         for row in cursor:
             if row[2] == userkey:
-                vals['ID'] = row[0]
+                vals['id'] = row[0]
 
         conn.close()
         return jsonify({'returnvalue': True, 'values': vals})
