@@ -7,7 +7,7 @@ def mailid(admin, mail):
     smtp_server = "smtp.gmail.com"
     sender_email = "passmanagepadddu@gmail.com"
     receiver_email = mail
-    password = "mail1234project"
+    password = "mail1234!project"
     message = f"""Subject: Your Request has been mailed.
 
         Your Admin Password is {admin}"""
