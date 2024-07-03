@@ -17,7 +17,7 @@ def createDatabase():
     conn = sqlite3.connect('password_manager.db', check_same_thread=False)
     try:
         conn.execute(
-            """CREATE TABLE USERS(ID INTEGER PRIMARY KEY AUTOINCREMENT, USERNAME TEXT, MAIL TEXT, PASSWORD TEXT)""")
+            """CREATE TABLE USERS(ID INTEGER PRIMARY KEY AUTOINCREMENT, USERNAME TEXT, MAIL TEXT, PASSWORD TEXT, SECURITYQ1 TEXT, SECURITYA1 TEXT, SECURITYQ2 TEXT, SECURITYA2 TEXT)""")
     except:
         cursor = conn.execute("SELECT * from USERS")
 
@@ -141,7 +141,7 @@ def getUsernames(user):
 
 
 @cross_origin(supports_credentials=True)
-def addUser(usernameIn, mailIn, passwordIn):
+def addUser(usernameIn, mailIn, passwordIn, securityq1, securitya1, securityq2, securitya2):
     conn = createDatabase()
     key = load_key()
     mailIn = 'P' + str(''.join(hex(ord(x))[2:] for x in mailIn))
@@ -161,8 +161,18 @@ def addUser(usernameIn, mailIn, passwordIn):
             ''.join(hex(ord(x))[2:] for x in usernameIn), key)
         passwordIn = encrypt_message(
             ''.join(hex(ord(x))[2:] for x in passwordIn), key)
-        command = 'INSERT INTO USERS (USERNAME, MAIL, PASSWORD) VALUES (?, ?, ?);'
-        values = (usernameIn, mailIn, passwordIn)
+        securityq1 = encrypt_message(
+            ''.join(hex(ord(x))[2:] for x in securityq1), key)
+        securitya1 = encrypt_message(
+            ''.join(hex(ord(x))[2:] for x in securitya1), key)
+        securityq2 = encrypt_message(
+            ''.join(hex(ord(x))[2:] for x in securityq2), key)
+        securitya2 = encrypt_message(
+            ''.join(hex(ord(x))[2:] for x in securitya2), key)
+
+        command = 'INSERT INTO USERS (USERNAME, MAIL, PASSWORD, SECURITYQ1, SECURITYA1, SECURITYQ2, SECURITYA2) VALUES (?, ?, ?, ?, ?, ?, ?)'
+        values = (usernameIn, mailIn, passwordIn, securityq1,
+                  securitya1, securityq2, securitya2)
         conn.execute(command, values)
         conn.commit()
         conn.close()
@@ -191,17 +201,33 @@ def userValidation(username, password):
 
 
 @ cross_origin(supports_credentials=True)
-def forgotPassword(username):
+def forgotPassword(username, seq1, sea1, seq2, sea2, newPassword):
     conn = createDatabase()
     key = load_key()
     rows = conn.execute("SELECT * from USERS")
     for row in rows:
         userRetrive = bytes.fromhex(
             decrypt_message(row[2], key)).decode('utf-8')
-        if bytes.fromhex(userRetrive[1:]).decode("utf-8") == username:
-            password = bytes.fromhex(
+        seq1Retrive = bytes.fromhex(
+            decrypt_message(row[4], key)).decode('utf-8')
+        sea1Retrive = bytes.fromhex(
+            decrypt_message(row[5], key)).decode('utf-8')
+        seq2Retrive = bytes.fromhex(
+            decrypt_message(row[6], key)).decode('utf-8')
+        sea2Retrive = bytes.fromhex(
+            decrypt_message(row[7], key)).decode('utf-8')
+
+        if bytes.fromhex(userRetrive[1:]).decode("utf-8") == username and seq1Retrive == seq1 and sea1Retrive == sea1 and seq2Retrive == seq2 and sea2Retrive == sea2:
+            """ password = bytes.fromhex(
                 decrypt_message(row[3], key)).decode('utf-8')
-            mailid(password, username)
+            mailid(password, username) """
+            updatekey = row[0]
+            newPassword = encrypt_message(
+                ''.join(hex(ord(x))[2:] for x in newPassword), key)
+            command = """UPDATE USERS SET PASSWORD = ? WHERE ID = ?"""
+            values = (newPassword, updatekey)
+            conn.execute(command, values)
+            conn.commit()
             conn.close()
             return jsonify({'returnvalue': True})
     conn.close()
@@ -219,4 +245,5 @@ if __name__ == '__main__':
     handler.register_function(forgotPassword, 'forgotPassword')
     app.run(debug=True, host="localhost", port=5050)
 
-# pyinstaller --noconfirm --onefile --console --windowed --icon "D:/Projects/Password Manager/finalFlask/output/favicon.ico" "D:/Projects/Password Manager/finalFlask/app.py"
+# pyinstaller --noconfirm --onefile --console --windowed --icon "E:\Projects\Final-Password-Manager-Python-Script\favicon.ico" "E:\Projects\Final-Password-Manager-Python-Script\app.py"
+# python -m PyInstaller --noconfirm --onefile --console --windowed --icon "E:\Projects\Final-Password-Manager-Python-Script\favicon.ico" "E:\Projects\Final-Password-Manager-Python-Script\app.py"
