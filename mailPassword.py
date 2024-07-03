@@ -1,4 +1,4 @@
-import smtplib
+""" import smtplib
 import ssl
 
 
@@ -8,9 +8,9 @@ def mailid(admin, mail):
     sender_email = "passmanagepadddu@gmail.com"
     receiver_email = mail
     password = "mail1234!project"
-    message = f"""Subject: Your Request has been mailed.
+    message = f'''Subject: Your Request has been mailed.
 
-        Your Admin Password is {admin}"""
+        Your Admin Password is {admin}'''
 
     context = ssl.create_default_context()
     with smtplib.SMTP(smtp_server, port) as server:
@@ -18,4 +18,4 @@ def mailid(admin, mail):
         server.starttls(context=context)
         server.ehlo()
         server.login(sender_email, password)
-        server.sendmail(sender_email, receiver_email, message)
+        server.sendmail(sender_email, receiver_email, message) """

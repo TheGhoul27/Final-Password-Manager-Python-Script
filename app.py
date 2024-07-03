@@ -4,7 +4,7 @@ from flask import Flask, jsonify
 from flask_xmlrpcre.xmlrpcre import XMLRPCHandler, Fault
 from flask_cors import CORS, cross_origin
 from encryptPassword import *
-from mailPassword import mailid
+# from mailPassword import mailid
 
 app = Flask(__name__)
 CORS(app, support_credentials=True)
@@ -246,4 +246,4 @@ if __name__ == '__main__':
     app.run(debug=True, host="localhost", port=5050)
 
 # pyinstaller --noconfirm --onefile --console --windowed --icon "E:\Projects\Final-Password-Manager-Python-Script\favicon.ico" "E:\Projects\Final-Password-Manager-Python-Script\app.py"
-# python -m PyInstaller --noconfirm --onefile --console --windowed --icon "E:\Projects\Final-Password-Manager-Python-Script\favicon.ico" "E:\Projects\Final-Password-Manager-Python-Script\app.py"
+# python -m PyInstaller --noconfirm --onefile --console --windowed --hidden-import=pkg_resources --icon "E:\Projects\Final-Password-Manager-Python-Script\favicon.ico" "E:\Projects\Final-Password-Manager-Python-Script\app.py"

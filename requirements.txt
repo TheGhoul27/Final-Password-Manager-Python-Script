@@ -1,0 +1,9 @@
+Flask
+Flask-XML-RPC
+Flask-XML-RPC-Re
+Flask-Cors
+cryptography
+pyinstaller
+pillow
+ipython
+pip
