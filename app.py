@@ -217,7 +217,12 @@ def forgotPassword(username, seq1, sea1, seq2, sea2, newPassword):
         sea2Retrive = bytes.fromhex(
             decrypt_message(row[7], key)).decode('utf-8')
 
-        if bytes.fromhex(userRetrive[1:]).decode("utf-8") == username and seq1Retrive == seq1 and sea1Retrive == sea1 and seq2Retrive == seq2 and sea2Retrive == sea2:
+        security1 = ((seq1Retrive == seq1 and sea1Retrive == sea1)
+                     or (seq2Retrive == seq1 and sea2Retrive == sea1))
+        security2 = ((seq1Retrive == seq2 and sea1Retrive == sea2)
+                     or (seq2Retrive == seq2 and sea2Retrive == sea2))
+
+        if bytes.fromhex(userRetrive[1:]).decode("utf-8") == username and security1 and security2:
             """ password = bytes.fromhex(
                 decrypt_message(row[3], key)).decode('utf-8')
             mailid(password, username) """
